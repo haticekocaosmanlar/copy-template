@@ -1,12 +1,12 @@
-# Copy Google Document's Content to Document with Google Apps Script
-* Copy one Google Doc's content by protecting it's template to current Google Doc. It inserts the content to cursor porition in the current Google Doc. 
-* You can also change this to inserting at the end of the document by stating append function instead of insert.(Explained more in the comments in the code.)
+# Copy One Google Document's Content to Another Document with Google Apps Script
+* Copy one Google Doc's content by protecting it's template to current Google Doc. It inserts source doc's content to cursor position in the target doc (current Google Doc). 
+* You can also insert the source doc's content at the end of the target doc by stating append function instead of insert.(Explained more in the comments of code.)
 
 ## Demo 
 ![](img/copy_google_doc_content_demo.gif)
 
 ## Script
-* This script should be added to current doc and create another doc for template.
+* This script should be added to current doc which we call "target doc" and create another doc for template whcib we call "source doc".
 * ``sourceDoc`` = Google document which keeps template and which we going to get content
 * ``targetDoc`` = current document which we are going to copy content on sourceDoc to curser position of targetDoc.
 
@@ -16,18 +16,23 @@ function onOpen(e) {
   DocumentApp.getUi()
       .createMenu('Template')
       .addItem('Insert Template', 'insertTemplate')
-      //.addSeparator()
+      //.addSeparator()                               // adds seperator
+      //.addItem('Submenu', 'menuItem'))              // append sub menu
       .addToUi();
 }
 
 // Funtion for copying template from another doc to this doc.
 function insertTemplate(){
+  
+  //define source doc
   var sourceDoc = DocumentApp.openByUrl(
     'https://docs.google.com/document/d/1pkapHGRM3NjrLnql4yJEuGeLSJCR3pf0wDrNB3OHlZ0/edit');
   
+  // getting current doc as target doc
   var targetDoc = DocumentApp.getActiveDocument();
   var totalElements = sourceDoc.getNumChildren();
-
+  
+  // getting cursor and finding it's position
   var cursor = targetDoc.getCursor();
   var position = cursor.getElement();
 
@@ -37,15 +42,15 @@ function insertTemplate(){
     var element = sourceDoc.getChild(j).copy();
     var type = element.getType();
     if( type == DocumentApp.ElementType.PARAGRAPH ){
-      //body.appendParagraph(element); // this adds the element at the end of the doc
+      //body.appendParagraph(element);    // this adds the element at the end of the doc
       body.insertParagraph(body.getChildIndex(position), element);
     }
     else if( type == DocumentApp.ElementType.TABLE){
-      //body.appendTable(element); // this adds the element at the end of the doc
+      //body.appendTable(element);        // this adds the element at the end of the doc
       body.insertTable(body.getChildIndex(position),element);
       }
     else if( type == DocumentApp.ElementType.LIST_ITEM){
-      //body.appendListItem(element); // this adds the element at the end of the doc
+      //body.appendListItem(element);     // this adds the element at the end of the doc
       body.insertListItem(body.getChildIndex(position),element);
       }
     }
